@@ -55,8 +55,16 @@
                 </div>
                 
                 <div class="hidden md:flex items-center space-x-1">
+                    @if(Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                    <a href="{{ route('dashboard') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('dashboard*') ? 'bg-indigo-100 text-indigo-700 shadow-sm' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+                        <i class="bi bi-speedometer2 mr-2"></i>Dashboard
+                    </a>
+                    @endif
                     <a href="{{ route('customers.index') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('customers.*') ? 'bg-indigo-100 text-indigo-700 shadow-sm' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
                         <i class="bi bi-people mr-2"></i>Customers
+                    </a>
+                    <a href="{{ route('service-categories.index') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('service-categories.*') ? 'bg-indigo-100 text-indigo-700 shadow-sm' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+                        <i class="bi bi-folder mr-2"></i>Categories
                     </a>
                     <a href="{{ route('services.index') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('services.*') ? 'bg-indigo-100 text-indigo-700 shadow-sm' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
                         <i class="bi bi-list-check mr-2"></i>Services
@@ -73,10 +81,24 @@
                 </div>
                 
                 <div class="hidden md:flex items-center space-x-4 ml-4 pl-4 border-l border-gray-200">
-                    <span class="text-sm text-gray-600 flex items-center">
-                        <i class="bi bi-person-circle mr-2 text-indigo-600"></i>
-                        {{ Auth::user()->name }}
-                    </span>
+                    @php
+                        $roleColors = [
+                            'admin' => 'bg-red-100 text-red-700',
+                            'manager' => 'bg-blue-100 text-blue-700',
+                            'cashier' => 'bg-green-100 text-green-700',
+                            'staff' => 'bg-purple-100 text-purple-700',
+                        ];
+                        $roleColor = $roleColors[Auth::user()->getRoleNames()->first()] ?? 'bg-gray-100 text-gray-700';
+                    @endphp
+                    <div class="flex items-center">
+                        <span class="text-sm text-gray-600 flex items-center mr-3">
+                            <i class="bi bi-person-circle mr-2 text-indigo-600"></i>
+                            {{ Auth::user()->name }}
+                        </span>
+                        <span class="text-xs font-medium px-2 py-1 rounded-full {{ $roleColor }}">
+                            {{ strtoupper(Auth::user()->getRoleNames()->first()) }}
+                        </span>
+                    </div>
                     <form action="{{ route('logout') }}" method="POST" class="inline">
                         @csrf
                         <button type="submit" class="px-4 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-all duration-200">
@@ -93,8 +115,16 @@
             
             <!-- Mobile menu -->
             <div id="mobileMenu" class="hidden md:hidden pb-4 space-y-1">
+                @if(Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                <a href="{{ route('dashboard') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('dashboard*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">
+                    <i class="bi bi-speedometer2 mr-2"></i>Dashboard
+                </a>
+                @endif
                 <a href="{{ route('customers.index') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('customers.*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">
                     <i class="bi bi-people mr-2"></i>Customers
+                </a>
+                <a href="{{ route('service-categories.index') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('service-categories.*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">
+                    <i class="bi bi-folder mr-2"></i>Categories
                 </a>
                 <a href="{{ route('services.index') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('services.*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">
                     <i class="bi bi-list-check mr-2"></i>Services
@@ -109,8 +139,21 @@
                     <i class="bi bi-graph-up mr-2"></i>Reports
                 </a>
                 <div class="border-t border-gray-200 mt-2 pt-2">
-                    <div class="px-4 py-2 text-sm text-gray-600">
-                        <i class="bi bi-person-circle mr-2"></i>{{ Auth::user()->name }}
+                    @php
+                        $roleColors = [
+                            'admin' => 'bg-red-100 text-red-700',
+                            'manager' => 'bg-blue-100 text-blue-700',
+                            'cashier' => 'bg-green-100 text-green-700',
+                            'staff' => 'bg-purple-100 text-purple-700',
+                        ];
+                        $roleColor = $roleColors[Auth::user()->getRoleNames()->first()] ?? 'bg-gray-100 text-gray-700';
+                    @endphp
+                    <div class="px-4 py-2 text-sm text-gray-600 flex items-center">
+                        <i class="bi bi-person-circle mr-2 text-indigo-600"></i>
+                        {{ Auth::user()->name }}
+                        <span class="text-xs font-medium ml-2 px-2 py-1 rounded-full {{ $roleColor }}">
+                            {{ strtoupper(Auth::user()->getRoleNames()->first()) }}
+                        </span>
                     </div>
                     <form action="{{ route('logout') }}" method="POST" class="px-4">
                         @csrf
