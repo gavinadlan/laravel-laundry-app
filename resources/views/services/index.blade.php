@@ -69,10 +69,16 @@
                             <i class="bi bi-tag mr-2"></i>Service Name
                         </th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                            <i class="bi bi-currency-dollar mr-2"></i>Price
+                            <i class="bi bi-folder mr-2"></i>Category
                         </th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                            <i class="bi bi-file-text mr-2"></i>Description
+                            <i class="bi bi-layers mr-2"></i>Tier
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                            <i class="bi bi-clock mr-2"></i>Duration
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                            <i class="bi bi-currency-dollar mr-2"></i>Price
                         </th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
                             <i class="bi bi-gear mr-2"></i>Actions
@@ -87,22 +93,46 @@
                                     <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
                                         <i class="bi bi-check-circle text-indigo-600"></i>
                                     </div>
-                                    <div class="text-sm font-semibold text-gray-900">{{ $service->name }}</div>
+                                    <div>
+                                        <div class="text-sm font-semibold text-gray-900">{{ $service->name }}</div>
+                                        @if($service->description)
+                                            <div class="text-xs text-gray-500 max-w-xs truncate">{{ $service->description }}</div>
+                                        @endif
+                                    </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-bold text-green-600">
-                                    Rp {{ number_format($service->price, 0, ',', '.') }}
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                @if($service->description)
-                                    <div class="text-sm text-gray-600 max-w-md">
-                                        {{ Str::limit($service->description, 80) }}
-                                    </div>
+                                @if($service->category)
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                          style="background-color: {{ $service->category->color }}20; color: {{ $service->category->color }};">
+                                        <i class="bi bi-{{ $service->category->icon ?? 'folder' }} mr-1"></i>
+                                        {{ $service->category->name }}
+                                    </span>
                                 @else
-                                    <span class="text-sm text-gray-400 italic">No description</span>
+                                    <span class="text-sm text-gray-400 italic">Uncategorized</span>
                                 @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                    @if($service->pricing_tier == 'express') bg-blue-100 text-blue-800
+                                    @elseif($service->pricing_tier == 'premium') bg-purple-100 text-purple-800
+                                    @else bg-gray-100 text-gray-800 @endif">
+                                    {{ $service->pricing_tier_label }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="text-sm text-gray-600">{{ $service->duration_minutes ?: '-' }} min</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex flex-col">
+                                    <div class="text-sm font-bold text-green-600">
+                                        Rp {{ number_format($service->price, 0, ',', '.') }}
+                                    </div>
+                                    <span class="inline-flex items-center mt-1 px-2 py-0.5 rounded text-xs font-semibold {{ $service->is_available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                        <i class="bi bi-{{ $service->is_available ? 'check-circle' : 'x-circle' }} mr-1"></i>
+                                        {{ $service->is_available ? 'Available' : 'Unavailable' }}
+                                    </span>
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex items-center space-x-2">

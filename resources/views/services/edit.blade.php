@@ -35,6 +35,29 @@
                 @enderror
             </div>
 
+            <!-- Category -->
+            <div>
+                <label for="category_id" class="block text-sm font-semibold text-gray-700 mb-2">
+                    <i class="bi bi-folder mr-2 text-indigo-600"></i>Category
+                </label>
+                <select name="category_id" id="category_id"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 outline-none @error('category_id') border-red-500 @enderror">
+                    <option value="">-- Select Category --</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ old('category_id', $service->category_id) == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('category_id')
+                    <p class="mt-1 text-sm text-red-600 flex items-center">
+                        <i class="bi bi-exclamation-circle mr-1"></i>{{ $message }}
+                    </p>
+                @enderror
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Price -->
             <div>
                 <label for="price" class="block text-sm font-semibold text-gray-700 mb-2">
@@ -57,6 +80,43 @@
                     </p>
                 @enderror
             </div>
+
+            <!-- Pricing Tier -->
+            <div>
+                <label for="pricing_tier" class="block text-sm font-semibold text-gray-700 mb-2">
+                    <i class="bi bi-layers mr-2 text-indigo-600"></i>Pricing Tier
+                </label>
+                <select name="pricing_tier" id="pricing_tier"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 outline-none @error('pricing_tier') border-red-500 @enderror">
+                    <option value="regular" {{ old('pricing_tier', $service->pricing_tier) == 'regular' ? 'selected' : '' }}>Regular</option>
+                    <option value="express" {{ old('pricing_tier', $service->pricing_tier) == 'express' ? 'selected' : '' }}>Express (+50%)</option>
+                    <option value="premium" {{ old('pricing_tier', $service->pricing_tier) == 'premium' ? 'selected' : '' }}>Premium (+100%)</option>
+                </select>
+                @error('pricing_tier')
+                    <p class="mt-1 text-sm text-red-600 flex items-center">
+                        <i class="bi bi-exclamation-circle mr-1"></i>{{ $message }}
+                    </p>
+                @enderror
+            </div>
+
+            <!-- Duration -->
+            <div>
+                <label for="duration_minutes" class="block text-sm font-semibold text-gray-700 mb-2">
+                    <i class="bi bi-clock mr-2 text-indigo-600"></i>Duration (minutes)
+                </label>
+                <input type="number" 
+                       name="duration_minutes" 
+                       id="duration_minutes" 
+                       value="{{ old('duration_minutes', $service->duration_minutes) }}" 
+                       min="0"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 outline-none @error('duration_minutes') border-red-500 @enderror"
+                       placeholder="e.g., 60">
+                @error('duration_minutes')
+                    <p class="mt-1 text-sm text-red-600 flex items-center">
+                        <i class="bi bi-exclamation-circle mr-1"></i>{{ $message }}
+                    </p>
+                @enderror
+            </div>
         </div>
 
         <!-- Description -->
@@ -74,6 +134,19 @@
                     <i class="bi bi-exclamation-circle mr-1"></i>{{ $message }}
                 </p>
             @enderror
+        </div>
+
+        <!-- Status -->
+        <div class="flex items-center">
+            <input type="checkbox" 
+                   name="is_available" 
+                   id="is_available" 
+                   value="1" 
+                   {{ old('is_available', $service->is_available) ? 'checked' : '' }}
+                   class="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+            <label for="is_available" class="ml-2 text-sm font-semibold text-gray-700">
+                <i class="bi bi-check-circle mr-1 text-indigo-600"></i>Service is available
+            </label>
         </div>
 
         <!-- Form Actions -->
