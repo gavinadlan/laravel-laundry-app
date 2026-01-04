@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
@@ -17,6 +18,7 @@ class Order extends Model
 
     protected $fillable = [
         'customer_id',
+        'invoice_number',
         'order_date',
         'delivery_date',
         'status',
@@ -48,11 +50,76 @@ class Order extends Model
     }
 
     /**
-     * The payment associated with the order.
+     * The payments associated with the order (supports multiple payments).
+     */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * The first payment associated with the order (for backward compatibility).
      */
     public function payment(): HasOne
     {
-        return $this->hasOne(Payment::class);
+        return $this->hasOne(Payment::class)->oldest();
+    }
+
+    /**
+     * Generate invoice number automatically.
+     */
+    public static function generateInvoiceNumber(): string
+    {
+        $prefix = 'INV';
+        $year = date('Y');
+        $month = date('m');
+        
+        // Get the last invoice number for this month
+        $lastOrder = self::where('invoice_number', 'like', "{$prefix}-{$year}{$month}-%")
+            ->orderBy('invoice_number', 'desc')
+            ->first();
+        
+        if ($lastOrder && $lastOrder->invoice_number) {
+            $lastNumber = (int) substr($lastOrder->invoice_number, -4);
+            $newNumber = $lastNumber + 1;
+        } else {
+            $newNumber = 1;
+        }
+        
+        return sprintf('%s-%s%s-%04d', $prefix, $year, $month, $newNumber);
+    }
+
+    /**
+     * Get total paid amount.
+     */
+    public function getTotalPaidAttribute(): float
+    {
+        return $this->payments()->sum('amount');
+    }
+
+    /**
+     * Get outstanding amount (total - paid).
+     */
+    public function getOutstandingAttribute(): float
+    {
+        return max(0, $this->total - $this->total_paid);
+    }
+
+    /**
+     * Get payment status.
+     */
+    public function getPaymentStatusAttribute(): string
+    {
+        $total = $this->total;
+        $paid = $this->total_paid;
+        
+        if ($paid == 0) {
+            return 'unpaid';
+        } elseif ($paid >= $total) {
+            return 'paid';
+        } else {
+            return 'partial';
+        }
     }
 
     /**
@@ -63,6 +130,20 @@ class Order extends Model
     {
         return $this->services->sum(function ($service) {
             return $service->price * $service->pivot->quantity;
+        });
+    }
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($order) {
+            if (empty($order->invoice_number)) {
+                $order->invoice_number = self::generateInvoiceNumber();
+            }
         });
     }
 }

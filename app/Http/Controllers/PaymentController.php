@@ -13,16 +13,42 @@ use Illuminate\Http\RedirectResponse;
  */
 class PaymentController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $payments = Payment::with('order.customer')->latest()->paginate(10);
-        return view('payments.index', compact('payments'));
+        $query = Payment::with('order.customer');
+
+        // Filter by customer if provided
+        if ($request->filled('customer_id')) {
+            $query->whereHas('order', function ($q) use ($request) {
+                $q->where('customer_id', $request->customer_id);
+            });
+        }
+
+        // Filter by payment method
+        if ($request->filled('method')) {
+            $query->where('method', $request->method);
+        }
+
+        // Filter by date range
+        if ($request->filled('date_from')) {
+            $query->where('payment_date', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->where('payment_date', '<=', $request->date_to);
+        }
+
+        $payments = $query->latest()->paginate(10);
+        $customers = \App\Models\Customer::orderBy('name')->get();
+
+        return view('payments.index', compact('payments', 'customers'));
     }
 
     public function create(Request $request): View
     {
-        // Only orders without payments should be payable
-        $orders = Order::doesntHave('payment')->with('customer')->get();
+        // Get all orders (now supports multiple payments)
+        $orders = Order::with('customer', 'payments')
+            ->orderBy('created_at', 'desc')
+            ->get();
         
         // Pre-select order if order_id is provided in query string
         $selectedOrderId = $request->query('order_id');
@@ -34,11 +60,24 @@ class PaymentController extends Controller
     {
         $validated = $request->validate([
             'order_id' => 'required|exists:orders,id',
-            'amount' => 'required|numeric|min:0',
+            'amount' => 'required|numeric|min:0.01',
             'payment_date' => 'required|date',
-            'method' => 'required|string|max:100',
+            'method' => 'required|string|in:cash,transfer,e_wallet,credit_card,debit_card',
             'reference' => 'nullable|string|max:255',
         ]);
+
+        $order = Order::with('payments')->findOrFail($validated['order_id']);
+        $totalPaid = $order->total_paid;
+        $orderTotal = $order->total;
+        $newPaymentAmount = $validated['amount'];
+
+        // Check if payment exceeds order total
+        if (($totalPaid + $newPaymentAmount) > $orderTotal) {
+            return back()->withErrors([
+                'amount' => 'Payment amount cannot exceed order total. Outstanding amount: ' . number_format($orderTotal - $totalPaid, 2)
+            ])->withInput();
+        }
+
         Payment::create($validated);
         
         // Redirect back to order if came from order page, otherwise to payments index

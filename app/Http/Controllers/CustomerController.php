@@ -52,7 +52,23 @@ class CustomerController extends Controller
      */
     public function show(Customer $customer): View
     {
+        $customer->load('orders.payments', 'orders.services');
         return view('customers.show', compact('customer'));
+    }
+
+    /**
+     * Display payment history for a customer.
+     */
+    public function payments(Customer $customer): View
+    {
+        $payments = \App\Models\Payment::whereHas('order', function ($q) use ($customer) {
+            $q->where('customer_id', $customer->id);
+        })
+        ->with('order')
+        ->latest()
+        ->paginate(15);
+
+        return view('customers.payments', compact('customer', 'payments'));
     }
 
     /**

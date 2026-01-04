@@ -21,9 +21,46 @@ class Payment extends Model
         'reference',
     ];
 
-    protected $dates = [
-        'payment_date',
+    protected $casts = [
+        'payment_date' => 'date',
+        'amount' => 'decimal:2',
     ];
+
+    // Payment methods
+    public const METHOD_CASH = 'cash';
+    public const METHOD_TRANSFER = 'transfer';
+    public const METHOD_E_WALLET = 'e_wallet';
+    public const METHOD_CREDIT_CARD = 'credit_card';
+    public const METHOD_DEBIT_CARD = 'debit_card';
+
+    /**
+     * Get payment method label.
+     */
+    public function getMethodLabelAttribute(): string
+    {
+        return match($this->method) {
+            self::METHOD_CASH => 'Cash',
+            self::METHOD_TRANSFER => 'Transfer',
+            self::METHOD_E_WALLET => 'E-Wallet',
+            self::METHOD_CREDIT_CARD => 'Credit Card',
+            self::METHOD_DEBIT_CARD => 'Debit Card',
+            default => ucfirst($this->method ?? 'Unknown'),
+        };
+    }
+
+    /**
+     * Get all payment methods.
+     */
+    public static function getMethods(): array
+    {
+        return [
+            self::METHOD_CASH => 'Cash',
+            self::METHOD_TRANSFER => 'Transfer',
+            self::METHOD_E_WALLET => 'E-Wallet',
+            self::METHOD_CREDIT_CARD => 'Credit Card',
+            self::METHOD_DEBIT_CARD => 'Debit Card',
+        ];
+    }
 
     /**
      * The order this payment belongs to.
