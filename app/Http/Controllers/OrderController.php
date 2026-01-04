@@ -16,9 +16,58 @@ use Illuminate\Http\RedirectResponse;
  */
 class OrderController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $orders = Order::with('customer', 'services', 'payment')->latest()->paginate(10);
+        $query = Order::with('customer', 'services', 'payments');
+
+        // Search by customer name or invoice number
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('invoice_number', 'like', "%{$search}%")
+                  ->orWhereHas('customer', function ($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by payment status
+        if ($request->filled('payment_status')) {
+            // This will be handled after loading
+        }
+
+        // Filter by date range
+        if ($request->filled('date_from')) {
+            $query->where('order_date', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->where('order_date', '<=', $request->date_to);
+        }
+
+        // Sort
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortDir = $request->get('sort_dir', 'desc');
+        $query->orderBy($sortBy, $sortDir);
+
+        $orders = $query->paginate(15)->withQueryString();
+
+        // Filter by payment status if needed (after loading)
+        if ($request->filled('payment_status')) {
+            $orders->getCollection()->transform(function ($order) use ($request) {
+                if ($order->payment_status !== $request->payment_status) {
+                    return null;
+                }
+                return $order;
+            })->filter();
+        }
+
         return view('orders.index', compact('orders'));
     }
 
@@ -69,7 +118,7 @@ class OrderController extends Controller
 
     public function show(Order $order): View
     {
-        $order->load('customer', 'services');
+        $order->load('customer', 'services', 'payments');
         return view('orders.show', compact('order'));
     }
 
