@@ -29,7 +29,14 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended(route('orders.index'));
+            
+            // Role-based redirect
+            $user = Auth::user();
+            if ($user->hasRole('admin') || $user->hasRole('manager')) {
+                return redirect()->route('dashboard')->with('success', 'Welcome back, ' . $user->name . '!');
+            }
+            
+            return redirect()->route('orders.index')->with('success', 'Welcome back, ' . $user->name . '!');
         }
 
         return back()->withErrors([
