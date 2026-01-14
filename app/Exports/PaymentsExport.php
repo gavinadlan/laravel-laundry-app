@@ -17,8 +17,8 @@ class PaymentsExport implements FromCollection, WithHeadings, WithMapping
     }
 
     /**
-     * @return \Illuminate\Support\Collection
-     */
+    * @return \Illuminate\Support\Collection
+    */
     public function collection()
     {
         $query = Payment::with('order.customer');

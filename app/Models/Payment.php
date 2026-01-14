@@ -59,7 +59,7 @@ class Payment extends Model
             self::METHOD_E_WALLET => 'E-Wallet',
             self::METHOD_CREDIT_CARD => 'Credit Card',
             self::METHOD_DEBIT_CARD => 'Debit Card',
-        ];
+    ];
     }
 
     /**

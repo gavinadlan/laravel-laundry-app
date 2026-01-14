@@ -17,8 +17,8 @@ class OrdersExport implements FromCollection, WithHeadings, WithMapping
     }
 
     /**
-     * @return \Illuminate\Support\Collection
-     */
+    * @return \Illuminate\Support\Collection
+    */
     public function collection()
     {
         $query = Order::with('customer', 'services', 'payments');
