@@ -13,6 +13,9 @@
                 </div>
             </div>
             <div class="flex items-center space-x-3">
+                <a href="{{ route('customers.payments', $customer) }}" class="inline-flex items-center px-4 py-2 bg-green-100 text-green-700 font-semibold rounded-xl hover:bg-green-200 transition-colors duration-200">
+                    <i class="bi bi-credit-card mr-2"></i>Payment History
+                </a>
                 <a href="{{ route('customers.edit', $customer) }}" class="inline-flex items-center px-4 py-2 bg-yellow-100 text-yellow-700 font-semibold rounded-xl hover:bg-yellow-200 transition-colors duration-200">
                     <i class="bi bi-pencil mr-2"></i>Edit
                 </a>
