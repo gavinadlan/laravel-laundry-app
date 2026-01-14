@@ -111,12 +111,9 @@
                         required
                         class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 outline-none bg-white @error('method') border-red-500 @enderror">
                     <option value="">Select payment method</option>
-                    <option value="Cash" {{ old('method') == 'Cash' ? 'selected' : '' }}>Cash</option>
-                    <option value="Bank Transfer" {{ old('method') == 'Bank Transfer' ? 'selected' : '' }}>Bank Transfer</option>
-                    <option value="Credit Card" {{ old('method') == 'Credit Card' ? 'selected' : '' }}>Credit Card</option>
-                    <option value="Debit Card" {{ old('method') == 'Debit Card' ? 'selected' : '' }}>Debit Card</option>
-                    <option value="E-Wallet" {{ old('method') == 'E-Wallet' ? 'selected' : '' }}>E-Wallet</option>
-                    <option value="Other" {{ old('method') == 'Other' ? 'selected' : '' }}>Other</option>
+                    @foreach(\App\Models\Payment::getMethods() as $value => $label)
+                        <option value="{{ $value }}" {{ old('method') == $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
                 </select>
                 @error('method')
                     <p class="mt-1 text-sm text-red-600 flex items-center">
