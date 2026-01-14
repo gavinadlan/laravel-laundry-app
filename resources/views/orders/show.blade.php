@@ -9,7 +9,13 @@
                 </div>
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900">Order #{{ $order->id }}</h1>
-                    <p class="text-gray-600 mt-1">Order details and information</p>
+                    <p class="text-gray-600 mt-1">
+                        @if($order->invoice_number)
+                            Invoice: {{ $order->invoice_number }}
+                        @else
+                            Order details and information
+                        @endif
+                    </p>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
@@ -189,38 +195,68 @@
 
             <!-- Payment Info -->
             <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-                <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                    <i class="bi bi-credit-card mr-2 text-indigo-600"></i>Payment
-                </h3>
-                @if ($order->payment)
-                    <div class="space-y-4">
-                        <div class="bg-green-50 rounded-xl p-4 border border-green-200">
-                            <p class="text-sm text-green-600 font-medium mb-1">Amount Paid</p>
-                            <p class="text-2xl font-bold text-green-700">
-                                Rp {{ number_format($order->payment->amount, 0, ',', '.') }}
-                            </p>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-gray-900 flex items-center">
+                        <i class="bi bi-credit-card mr-2 text-indigo-600"></i>Payment
+                    </h3>
+                    @php
+                        $statusConfig = [
+                            'paid' => ['bg' => 'bg-green-100', 'text' => 'text-green-800', 'icon' => 'check-circle'],
+                            'partial' => ['bg' => 'bg-yellow-100', 'text' => 'text-yellow-800', 'icon' => 'clock'],
+                            'unpaid' => ['bg' => 'bg-red-100', 'text' => 'text-red-800', 'icon' => 'x-circle'],
+                        ];
+                        $config = $statusConfig[$order->payment_status] ?? ['bg' => 'bg-gray-100', 'text' => 'text-gray-800', 'icon' => 'circle'];
+                    @endphp
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {{ $config['bg'] }} {{ $config['text'] }}">
+                        <i class="bi bi-{{ $config['icon'] }} mr-1"></i>
+                        {{ ucfirst($order->payment_status) }}
+                    </span>
+                </div>
+
+                <!-- Payment Summary -->
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <p class="text-xs text-gray-500 mb-1">Order Total</p>
+                        <p class="text-lg font-bold text-gray-900">Rp {{ number_format($order->total, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="bg-green-50 rounded-xl p-4 border border-green-200">
+                        <p class="text-xs text-green-600 mb-1">Total Paid</p>
+                        <p class="text-lg font-bold text-green-700">Rp {{ number_format($order->total_paid, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="bg-red-50 rounded-xl p-4 border border-red-200">
+                        <p class="text-xs text-red-600 mb-1">Outstanding</p>
+                        <p class="text-lg font-bold text-red-700">Rp {{ number_format($order->outstanding, 0, ',', '.') }}</p>
+                    </div>
+                </div>
+
+                @if ($order->payments->count() > 0)
+                    <!-- Payment History -->
+                    <div class="mb-4">
+                        <h4 class="text-sm font-semibold text-gray-700 mb-3">Payment History</h4>
+                        <div class="space-y-2">
+                            @foreach($order->payments as $payment)
+                                <div class="bg-gray-50 rounded-lg p-3 border border-gray-200 flex items-center justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-3">
+                                            <span class="text-sm font-semibold text-gray-900">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
+                                            <span class="text-xs text-gray-500">{{ $payment->method_label }}</span>
+                                            <span class="text-xs text-gray-500">{{ $payment->payment_date ? date('M d, Y', strtotime($payment->payment_date)) : '-' }}</span>
+                                        </div>
+                                        @if($payment->reference)
+                                            <p class="text-xs text-gray-500 mt-1">Ref: {{ $payment->reference }}</p>
+                                        @endif
+                                    </div>
+                                    <a href="{{ route('payments.show', $payment) }}" class="text-indigo-600 hover:text-indigo-800 ml-2">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </div>
+                            @endforeach
                         </div>
-                        <div>
-                            <p class="text-sm text-gray-500">Payment Date</p>
-                            <p class="text-sm font-semibold text-gray-900">
-                                {{ date('M d, Y', strtotime($order->payment->payment_date)) }}
-                            </p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-500">Method</p>
-                            <p class="text-sm font-semibold text-gray-900">{{ $order->payment->method }}</p>
-                        </div>
-                        @if($order->payment->reference)
-                        <div>
-                            <p class="text-sm text-gray-500">Reference</p>
-                            <p class="text-sm font-semibold text-gray-900">{{ $order->payment->reference }}</p>
-                        </div>
-                        @endif
-                        <div class="pt-4 border-t border-gray-200">
-                            <a href="{{ route('payments.show', $order->payment) }}" class="inline-flex items-center text-sm text-indigo-600 hover:text-indigo-800 font-medium">
-                                <i class="bi bi-arrow-right mr-2"></i>View Payment Details
-                            </a>
-                        </div>
+                    </div>
+                    <div class="pt-4 border-t border-gray-200">
+                        <a href="{{ route('payments.create') }}?order_id={{ $order->id }}" class="inline-flex items-center text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+                            <i class="bi bi-plus-circle mr-2"></i>Add Payment
+                        </a>
                     </div>
                 @else
                     <div class="text-center py-8">
