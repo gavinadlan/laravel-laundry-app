@@ -75,6 +75,9 @@
                     <a href="{{ route('payments.index') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('payments.*') ? 'bg-indigo-100 text-indigo-700 shadow-sm' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
                         <i class="bi bi-credit-card mr-2"></i>Payments
                     </a>
+                    <a href="{{ route('invoices.index') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('invoices.*') ? 'bg-indigo-100 text-indigo-700 shadow-sm' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+                        <i class="bi bi-receipt mr-2"></i>Invoices
+                    </a>
                     <a href="{{ route('reports.orders') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('reports.*') ? 'bg-indigo-100 text-indigo-700 shadow-sm' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
                         <i class="bi bi-graph-up mr-2"></i>Reports
                     </a>

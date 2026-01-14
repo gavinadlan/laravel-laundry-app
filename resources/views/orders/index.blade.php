@@ -99,7 +99,7 @@
                 <thead class="bg-gradient-to-r from-indigo-600 to-purple-600">
                     <tr>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                            <i class="bi bi-hash mr-2"></i>ID
+                            <i class="bi bi-hash mr-2"></i>Invoice #
                         </th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
                             <i class="bi bi-person mr-2"></i>Customer
@@ -125,7 +125,10 @@
                     @foreach ($orders as $order)
                         <tr class="hover:bg-gray-50 transition-colors duration-150">
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-sm font-bold text-indigo-600">#{{ $order->id }}</span>
+                                <div>
+                                    <span class="text-sm font-bold text-indigo-600">{{ $order->invoice_number ?? 'N/A' }}</span>
+                                    <div class="text-xs text-gray-500">#{{ $order->id }}</div>
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
