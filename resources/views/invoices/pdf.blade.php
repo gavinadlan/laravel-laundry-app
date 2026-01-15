@@ -1,223 +1,330 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
-    <title>Invoice {{ $order->invoice_number ?? 'N/A' }}</title>
+    <title>Invoice {{ $order->invoice_number ?? $order->id }}</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
+            font-family: 'Helvetica', 'Arial', sans-serif;
             color: #333;
+            font-size: 14px;
+            line-height: 1.5;
             margin: 0;
-            padding: 20px;
+            padding: 0;
         }
-        .header {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 8px 8px 0 0;
-            margin-bottom: 30px;
+
+        .container {
+            width: 100%;
+            margin: 0 auto;
+            background: #fff;
         }
-        .header h1 {
-            margin: 0;
+
+        /* Header */
+        .header-table {
+            width: 100%;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        .brand-name {
             font-size: 28px;
-        }
-        .header p {
-            margin: 5px 0 0 0;
-            opacity: 0.9;
-        }
-        .info-section {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-        }
-        .info-box {
-            width: 48%;
-            background: #f9fafb;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-        }
-        .info-box h3 {
-            margin: 0 0 10px 0;
-            font-size: 12px;
+            font-weight: bold;
+            color: #4f46e5;
             text-transform: uppercase;
-            color: #6b7280;
+            letter-spacing: 1px;
         }
-        .info-box p {
-            margin: 5px 0;
-            font-size: 12px;
+
+        .invoice-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ccc;
+            text-align: right;
+            text-transform: uppercase;
         }
-        table {
+
+        /* Details Section */
+        .details-table {
+            width: 100%;
+            margin-bottom: 40px;
+        }
+
+        .details-box {
+            vertical-align: top;
+        }
+
+        .client-label {
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .client-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .meta-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .meta-table td {
+            padding: 5px 0;
+            text-align: right;
+        }
+
+        .meta-label {
+            color: #888;
+            padding-right: 15px;
+        }
+
+        .meta-value {
+            font-weight: bold;
+        }
+
+        /* Items Table */
+        .items-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 30px;
         }
-        th {
-            background: #f3f4f6;
-            padding: 10px;
+
+        .items-table th {
+            background-color: #f8f9fa;
+            color: #555;
+            font-weight: bold;
+            padding: 12px 15px;
             text-align: left;
-            font-weight: 600;
-            font-size: 11px;
-            text-transform: uppercase;
-            color: #6b7280;
-            border-bottom: 2px solid #e5e7eb;
-        }
-        td {
-            padding: 10px;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 2px solid #ddd;
             font-size: 12px;
+            text-transform: uppercase;
         }
+
+        .items-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
         .text-right {
             text-align: right;
         }
-        .totals {
-            width: 300px;
-            margin-left: auto;
-            background: #f9fafb;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
+
+        .text-center {
+            text-align: center;
         }
-        .totals-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 0;
-        }
-        .totals-row.total {
-            border-top: 2px solid #e5e7eb;
-            margin-top: 10px;
-            padding-top: 10px;
+
+        .item-name {
             font-weight: bold;
-            font-size: 14px;
         }
-        .status-badge {
+
+        .item-desc {
+            font-size: 12px;
+            color: #777;
+            margin-top: 4px;
+        }
+
+        /* Totals */
+        .totals-table {
+            width: 40%;
+            margin-left: auto;
+            border-collapse: collapse;
+        }
+
+        .totals-table td {
+            padding: 8px 0;
+            text-align: right;
+        }
+
+        .total-label {
+            color: #777;
+            padding-right: 20px;
+        }
+
+        .total-value {
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .grand-total {
+            border-top: 2px solid #4f46e5;
+            padding-top: 10px !important;
+        }
+
+        .grand-total .total-value {
+            font-size: 18px;
+            color: #4f46e5;
+        }
+
+        /* Status Badge */
+        .status {
             display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: 600;
+            margin-top: 5px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
         }
+
         .status-paid {
             background: #d1fae5;
             color: #065f46;
         }
-        .status-partial {
-            background: #fef3c7;
-            color: #92400e;
-        }
+
         .status-unpaid {
             background: #fee2e2;
             color: #991b1b;
         }
+
+        .status-partial {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 50px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+        }
     </style>
 </head>
+
 <body>
-    <div class="header">
-        <h1>INVOICE</h1>
-        <p>Invoice #{{ $order->invoice_number ?? 'N/A' }}</p>
-    </div>
-
-    <div class="info-section">
-        <div class="info-box">
-            <h3>Bill To</h3>
-            <p><strong>{{ $order->customer->name }}</strong></p>
-            @if($order->customer->email)
-                <p>{{ $order->customer->email }}</p>
-            @endif
-            @if($order->customer->phone)
-                <p>{{ $order->customer->phone }}</p>
-            @endif
-            @if($order->customer->address)
-                <p>{{ $order->customer->address }}</p>
-            @endif
-        </div>
-        <div class="info-box">
-            <h3>Order Information</h3>
-            <p><strong>Order ID:</strong> #{{ $order->id }}</p>
-            <p><strong>Order Date:</strong> {{ $order->order_date ? date('M d, Y', strtotime($order->order_date)) : '-' }}</p>
-            @if($order->delivery_date)
-                <p><strong>Delivery Date:</strong> {{ date('M d, Y', strtotime($order->delivery_date)) }}</p>
-            @endif
-            <p><strong>Status:</strong> {{ ucfirst(str_replace('_', ' ', $order->status)) }}</p>
-        </div>
-    </div>
-
-    <table>
-        <thead>
+    <div class="container">
+        <!-- Header -->
+        <table class="header-table">
             <tr>
-                <th>Service</th>
-                <th class="text-right">Quantity</th>
-                <th class="text-right">Price</th>
-                <th class="text-right">Total</th>
+                <td style="vertical-align: middle;">
+                    <div class="brand-name">{{ config('app.name', 'Laundry App') }}</div>
+                    <div style="color: #666; font-size: 12px; margin-top: 5px;">
+                        Professional Laundry Services
+                    </div>
+                </td>
+                <td style="text-align: right; vertical-align: middle;">
+                    <div class="invoice-title">INVOICE</div>
+                    <div style="color: #666; margin-top: 5px;">#{{ $order->invoice_number ?? $order->id }}</div>
+                    <div class="status status-{{ $order->payment_status }}">
+                        {{ ucfirst($order->payment_status) }}
+                    </div>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach($order->services as $service)
-                <tr>
-                    <td>
-                        <strong>{{ $service->name }}</strong>
-                        @if($service->description)
-                            <br><small style="color: #6b7280;">{{ $service->description }}</small>
+        </table>
+
+        <!-- Details -->
+        <table class="details-table">
+            <tr>
+                <td class="details-box" style="width: 55%;">
+                    <div class="client-label">Billed To</div>
+                    <div class="client-name">{{ $order->customer->name }}</div>
+                    <div style="color: #555;">
+                        @if($order->customer->address)
+                            {{ $order->customer->address }}<br>
                         @endif
-                    </td>
-                    <td class="text-right">{{ $service->pivot->quantity }}</td>
-                    <td class="text-right">Rp {{ number_format($service->price, 0, ',', '.') }}</td>
-                    <td class="text-right"><strong>Rp {{ number_format($service->price * $service->pivot->quantity, 0, ',', '.') }}</strong></td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-
-    @if($order->payments->count() > 0)
-    <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 10px; color: #6b7280;">PAYMENTS</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Method</th>
-                <th>Reference</th>
-                <th class="text-right">Amount</th>
+                        @if($order->customer->email)
+                            {{ $order->customer->email }}<br>
+                        @endif
+                        @if($order->customer->phone)
+                            {{ $order->customer->phone }}
+                        @endif
+                    </div>
+                </td>
+                <td class="details-box" style="width: 45%;">
+                    <table class="meta-table">
+                        <tr>
+                            <td class="meta-label">Order Date:</td>
+                            <td class="meta-value">
+                                {{ $order->order_date ? date('M d, Y', strtotime($order->order_date)) : '-' }}</td>
+                        </tr>
+                        @if($order->delivery_date)
+                            <tr>
+                                <td class="meta-label">Due Date:</td>
+                                <td class="meta-value">{{ date('M d, Y', strtotime($order->delivery_date)) }}</td>
+                            </tr>
+                        @endif
+                        <tr>
+                            <td class="meta-label">Payment ID:</td>
+                            <td class="meta-value">
+                                @if($order->payments->isNotEmpty())
+                                    {{ $order->payments->first()->id }}
+                                @else
+                                    -
+                                @endif
+                            </td>
+                        </tr>
+                    </table>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach($order->payments as $payment)
+        </table>
+
+        <!-- Items -->
+        <table class="items-table">
+            <thead>
                 <tr>
-                    <td>{{ $payment->payment_date ? date('M d, Y', strtotime($payment->payment_date)) : '-' }}</td>
-                    <td>{{ $payment->method_label }}</td>
-                    <td>{{ $payment->reference ?? '-' }}</td>
-                    <td class="text-right">Rp {{ number_format($payment->amount, 0, ',', '.') }}</td>
+                    <th style="width: 5%;">#</th>
+                    <th style="width: 45%;">Service Description</th>
+                    <th class="text-center" style="width: 15%;">Qty</th>
+                    <th class="text-right" style="width: 15%;">Rate</th>
+                    <th class="text-right" style="width: 20%;">Amount</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
-    @endif
+            </thead>
+            <tbody>
+                @foreach($order->services as $index => $service)
+                    <tr>
+                        <td style="color: #888;">{{ $index + 1 }}</td>
+                        <td>
+                            <div class="item-name">{{ $service->name }}</div>
+                            @if($service->description)
+                                <div class="item-desc">{{ $service->description }}</div>
+                            @endif
+                        </td>
+                        <td class="text-center">{{ $service->pivot->quantity }}</td>
+                        <td class="text-right">Rp {{ number_format($service->price, 0, ',', '.') }}</td>
+                        <td class="text-right">Rp
+                            {{ number_format($service->price * $service->pivot->quantity, 0, ',', '.') }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-    <div class="totals">
-        <div class="totals-row">
-            <span>Subtotal:</span>
-            <span>Rp {{ number_format($order->total, 0, ',', '.') }}</span>
-        </div>
-        <div class="totals-row">
-            <span>Total Paid:</span>
-            <span style="color: #059669;">Rp {{ number_format($order->total_paid, 0, ',', '.') }}</span>
-        </div>
-        <div class="totals-row total">
-            <span>Outstanding:</span>
-            <span style="color: #dc2626;">Rp {{ number_format($order->outstanding, 0, ',', '.') }}</span>
-        </div>
-        <div style="margin-top: 10px; text-align: center;">
-            <span class="status-badge status-{{ $order->payment_status }}">
-                Payment Status: {{ ucfirst($order->payment_status) }}
-            </span>
+        <!-- Totals -->
+        <table class="totals-table">
+            <tr>
+                <td class="total-label">Subtotal:</td>
+                <td class="total-value">Rp {{ number_format($order->total, 0, ',', '.') }}</td>
+            </tr>
+            @if($order->total_paid > 0)
+                <tr>
+                    <td class="total-label">Amount Paid:</td>
+                    <td class="total-value" style="color: #065f46;">(-) Rp
+                        {{ number_format($order->total_paid, 0, ',', '.') }}</td>
+                </tr>
+            @endif
+            <tr class="grand-total">
+                <td class="total-label" style="padding-top: 10px; color: #333; font-weight: bold;">Amount Due:</td>
+                <td class="total-value">Rp {{ number_format($order->outstanding, 0, ',', '.') }}</td>
+            </tr>
+        </table>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p style="margin-bottom: 5px;">Thank you for your business!</p>
+            @if($order->notes)
+                <p style="font-style: italic; margin-top: 10px;">Note: {{ $order->notes }}</p>
+            @endif
+            <p style="margin-top: 20px; font-size: 11px;">
+                {{ config('app.name', 'Laundry App') }} &bull; Generated on {{ date('d M Y, H:i') }}
+            </p>
         </div>
     </div>
-
-    @if($order->notes)
-    <div style="margin-top: 30px; padding: 15px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb;">
-        <h3 style="font-size: 12px; font-weight: 600; margin-bottom: 10px; color: #6b7280; text-transform: uppercase;">Notes</h3>
-        <p style="margin: 0; font-size: 12px;">{{ $order->notes }}</p>
-    </div>
-    @endif
 </body>
+
 </html>
