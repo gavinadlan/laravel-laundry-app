@@ -63,7 +63,7 @@
                     <i class="bi bi-currency-dollar mr-2 text-indigo-600"></i>Price (Rp) <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
-                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500">Rp</span>
+                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-semibold">Rp</span>
                     <input type="number" 
                            step="0.01" 
                            name="price" 
