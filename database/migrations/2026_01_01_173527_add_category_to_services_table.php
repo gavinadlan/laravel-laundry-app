@@ -4,18 +4,25 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         Schema::table('services', function (Blueprint $table) {
-            $table->foreignId('category_id')->nullable()->after('id')->constrained('service_categories')->onDelete('set null');
-            $table->string('pricing_tier')->default('regular')->after('price');
-            $table->unsignedInteger('duration_minutes')->nullable()->after('pricing_tier');
-            $table->boolean('is_available')->default(true)->after('duration_minutes');
+            if (!Schema::hasColumn('services', 'category_id')) {
+                $table->foreignId('category_id')->nullable()->after('id')->constrained('service_categories')->onDelete('set null');
+            }
+            if (!Schema::hasColumn('services', 'pricing_tier')) {
+                $table->string('pricing_tier')->default('regular')->after('price');
+            }
+            if (!Schema::hasColumn('services', 'duration_minutes')) {
+                $table->unsignedInteger('duration_minutes')->nullable()->after('pricing_tier');
+            }
+            if (!Schema::hasColumn('services', 'is_available')) {
+                $table->boolean('is_available')->default(true)->after('duration_minutes');
+            }
         });
     }
 
