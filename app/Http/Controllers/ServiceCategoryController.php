@@ -18,7 +18,7 @@ class ServiceCategoryController extends Controller
             ->orderBy('sort_order')
             ->orderBy('name')
             ->paginate(10);
-            
+
         return view('service-categories.index', compact('categories'));
     }
 
@@ -56,7 +56,7 @@ class ServiceCategoryController extends Controller
     public function show(ServiceCategory $serviceCategory): View
     {
         $serviceCategory->load('services');
-        return view('service-categories.show', compact('serviceCategory'));
+        return view('service-categories.show', ['category' => $serviceCategory]);
     }
 
     /**
@@ -64,7 +64,7 @@ class ServiceCategoryController extends Controller
      */
     public function edit(ServiceCategory $serviceCategory): View
     {
-        return view('service-categories.edit', compact('serviceCategory'));
+        return view('service-categories.edit', ['category' => $serviceCategory]);
     }
 
     /**

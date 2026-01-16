@@ -210,6 +210,19 @@
             </div>
         @endif
 
+        @if (session('error'))
+            <div
+                class="mb-6 bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-sm flex items-center justify-between animate-slide-in">
+                <div class="flex items-center">
+                    <i class="bi bi-exclamation-circle-fill text-red-500 text-xl mr-3"></i>
+                    <p class="font-medium">{{ session('error') }}</p>
+                </div>
+                <button onclick="this.parentElement.remove()" class="text-red-700 hover:text-red-900 ml-4">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+        @endif
+
         <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 sm:p-8">
             @yield('content')
         </div>
