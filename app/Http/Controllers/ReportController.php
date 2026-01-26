@@ -69,6 +69,8 @@ class ReportController extends Controller
             'deliveredOrders' => $deliveredOrders,
             'totalRevenue' => $totalRevenue,
             'period' => $period,
+            'month' => $request->get('month', now()->month),
+            'year' => $request->get('year', now()->year),
             'dateFrom' => $dateFrom,
             'dateTo' => $dateTo,
         ]);
@@ -154,18 +156,18 @@ class ReportController extends Controller
 
         if ($period === 'daily') {
             $revenue = Payment::select(
-                    DB::raw('DATE(payment_date) as date'),
-                    DB::raw('SUM(amount) as total')
-                )
+                DB::raw('DATE(payment_date) as date'),
+                DB::raw('SUM(amount) as total')
+            )
                 ->where('payment_date', '>=', now()->subDays($months * 30))
                 ->groupBy('date')
                 ->orderBy('date')
                 ->get();
         } elseif ($period === 'yearly') {
             $revenue = Payment::select(
-                    DB::raw('YEAR(payment_date) as year'),
-                    DB::raw('SUM(amount) as total')
-                )
+                DB::raw('YEAR(payment_date) as year'),
+                DB::raw('SUM(amount) as total')
+            )
                 ->where('payment_date', '>=', now()->subYears($months))
                 ->groupBy('year')
                 ->orderBy('year')
@@ -173,10 +175,10 @@ class ReportController extends Controller
         } else {
             // Monthly
             $revenue = Payment::select(
-                    DB::raw('MONTH(payment_date) as month'),
-                    DB::raw('YEAR(payment_date) as year'),
-                    DB::raw('SUM(amount) as total')
-                )
+                DB::raw('MONTH(payment_date) as month'),
+                DB::raw('YEAR(payment_date) as year'),
+                DB::raw('SUM(amount) as total')
+            )
                 ->where('payment_date', '>=', now()->subMonths($months))
                 ->groupBy('month', 'year')
                 ->orderBy('year')
