@@ -59,11 +59,11 @@ class InvoiceController extends Controller
     public function download(Order $order): Response
     {
         $order->load('customer', 'services', 'payments');
-        
+
         $pdf = Pdf::loadView('invoices.pdf', compact('order'));
-        
+
         $filename = 'invoice-' . $order->invoice_number . '.pdf';
-        
+
         return $pdf->download($filename);
     }
 
@@ -82,13 +82,16 @@ class InvoiceController extends Controller
     public function email(Order $order): RedirectResponse
     {
         $order->load('customer', 'services', 'payments');
-        
+
         if (!$order->customer->email) {
             return back()->with('error', 'Customer does not have an email address.');
         }
 
-        // TODO: Implement email sending
-        // For now, just return success message
-        return back()->with('success', 'Invoice email will be sent to ' . $order->customer->email);
+        try {
+            \Illuminate\Support\Facades\Mail::to($order->customer->email)->send(new \App\Mail\InvoiceMail($order));
+            return back()->with('success', 'Invoice email has been sent to ' . $order->customer->email);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to send email: ' . $e->getMessage());
+        }
     }
 }
