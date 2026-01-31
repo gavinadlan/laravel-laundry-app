@@ -190,6 +190,35 @@ class ReportController extends Controller
     }
 
     /**
+     * Display accounts receivable report (outstanding payments).
+     */
+    public function accountsReceivable(Request $request): View
+    {
+        $customers = Customer::with([
+            'orders' => function ($q) {
+                $q->with('services', 'payments');
+            }
+        ])->get();
+
+        $receivables = $customers->map(function ($customer) {
+            $outstanding = $customer->orders->sum(function ($order) {
+                return $order->outstanding;
+            });
+
+            return [
+                'customer' => $customer,
+                'outstanding' => $outstanding,
+                'unpaid_orders_count' => $customer->orders->filter(fn($o) => $o->payment_status !== 'paid')->count(),
+            ];
+        })->filter(fn($item) => $item['outstanding'] > 0)
+            ->sortByDesc('outstanding');
+
+        $totalReceivable = $receivables->sum('outstanding');
+
+        return view('reports.accounts-receivable', compact('receivables', 'totalReceivable'));
+    }
+
+    /**
      * Export orders to Excel.
      */
     public function exportOrders(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse

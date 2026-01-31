@@ -14,7 +14,7 @@ Comprehensive feature roadmap untuk laundry management app dengan Laravel
 | ---------------------------------------------------------- | ---------- | ----------------------------- |
 | Multi-user & Roles (Admin, Manager, Cashier, Staff)        | ✅ Done    | Spatie Permission installed   |
 | Permission System                                          | ✅ Done    | Role-based permissions        |
-| User Activity Logs                                         | ⏳ Pending | Can be added later            |
+| User Activity Logs                                         | ✅ Done    | Implemented with Spatie Activitylog |
 | Service Categories                                         | ✅ Done    | CRUD dengan slug & ordering   |
 | Service Management (pricing tiers, duration, availability) | ✅ Done    | Regular/Express/Premier tiers |
 
@@ -37,7 +37,7 @@ Comprehensive feature roadmap untuk laundry management app dengan Laravel
 | Invoice number auto-generation                  | ✅ Done    | Auto-generate on order creation          |
 | Invoice history                                 | ✅ Done    | Invoice index view complete              |
 | Payment status (paid/partial/unpaid) on invoice | ✅ Done    | Integrated in Order model & views        |
-| Email invoice to customer                       | 🔄 Partial | Controller method exists, needs mail config |
+| Email invoice to customer                       | ✅ Done    | Implemented with InvoiceMail & Attachment |
 
 ### ⏳ Phase 4: Notifications & Reminders - PENDING
 
@@ -84,9 +84,9 @@ Comprehensive feature roadmap untuk laundry management app dengan Laravel
 
 | Feature                  | Status     | Notes |
 | ------------------------ | ---------- | ----- |
-| Cash flow report         | ⏳ Pending |       |
-| Profit & loss statement  | ⏳ Pending |       |
-| Accounts receivable      | ⏳ Pending |       |
+| Cash flow report         | ⏳ Pending |                                          |
+| Profit & loss statement  | ⏳ Pending | Need Expense module first                |
+| Accounts receivable      | ✅ Done    | Implemented in ReportController & Views  |
 | Financial reconciliation | ⏳ Pending |       |
 
 ### ⏳ Phase 8: Communication - PENDING

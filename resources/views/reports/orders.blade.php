@@ -2,15 +2,44 @@
 
 @section('content')
     <div class="mb-6">
-        <div class="flex items-center mb-2">
+        <div class="flex items-center mb-6">
             <div
                 class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center mr-3 shadow-lg">
                 <i class="bi bi-graph-up text-white text-lg"></i>
             </div>
             <div>
-                <h1 class="text-3xl font-bold text-gray-900">Orders Report</h1>
+                <h1 class="text-3xl font-bold text-gray-900">Reports Dashboard</h1>
                 <p class="text-gray-600 mt-1">Overview of your business performance</p>
             </div>
+        </div>
+
+        <!-- Reports Navigation -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+            <a href="{{ route('reports.orders') }}"
+                class="flex flex-col items-center justify-center p-4 bg-indigo-50 border border-indigo-200 rounded-xl text-center transition-transform hover:scale-105">
+                <i class="bi bi-cart text-indigo-600 text-2xl mb-2"></i>
+                <span class="text-sm font-bold text-indigo-900">Orders</span>
+            </a>
+            <a href="{{ route('reports.revenue') }}"
+                class="flex flex-col items-center justify-center p-4 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 transition-transform hover:scale-105">
+                <i class="bi bi-cash-stack text-green-600 text-2xl mb-2"></i>
+                <span class="text-sm font-bold text-gray-700">Revenue</span>
+            </a>
+            <a href="{{ route('reports.per-customer') }}"
+                class="flex flex-col items-center justify-center p-4 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 transition-transform hover:scale-105">
+                <i class="bi bi-people text-blue-600 text-2xl mb-2"></i>
+                <span class="text-sm font-bold text-gray-700">Customers</span>
+            </a>
+            <a href="{{ route('reports.per-service') }}"
+                class="flex flex-col items-center justify-center p-4 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 transition-transform hover:scale-105">
+                <i class="bi bi-list-check text-purple-600 text-2xl mb-2"></i>
+                <span class="text-sm font-bold text-gray-700">Services</span>
+            </a>
+            <a href="{{ route('reports.accounts-receivable') }}"
+                class="flex flex-col items-center justify-center p-4 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 transition-transform hover:scale-105">
+                <i class="bi bi-wallet2 text-red-600 text-2xl mb-2"></i>
+                <span class="text-sm font-bold text-gray-700">Receivable</span>
+            </a>
         </div>
     </div>
 

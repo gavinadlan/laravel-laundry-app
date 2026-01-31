@@ -43,7 +43,7 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     // Dashboard - accessible by admin and manager
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     // Resourceful routes for CRUD operations
     Route::resource('customers', CustomerController::class);
     Route::get('customers/{customer}/payments', [CustomerController::class, 'payments'])->name('customers.payments');
@@ -63,6 +63,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('reports/per-customer', [ReportController::class, 'perCustomer'])->name('reports.per-customer');
     Route::get('reports/per-service', [ReportController::class, 'perService'])->name('reports.per-service');
     Route::get('reports/revenue', [ReportController::class, 'revenue'])->name('reports.revenue');
+    Route::get('reports/accounts-receivable', [ReportController::class, 'accountsReceivable'])->name('reports.accounts-receivable');
     Route::get('reports/export/orders', [ReportController::class, 'exportOrders'])->name('reports.export.orders');
     Route::get('reports/export/payments', [ReportController::class, 'exportPayments'])->name('reports.export.payments');
     Route::get('reports/export/pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf');
