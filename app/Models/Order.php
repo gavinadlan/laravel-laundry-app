@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class Order extends Model
 {
-    use HasFactory;
+    use HasFactory, \Spatie\Activitylog\Traits\LogsActivity;
 
     protected $fillable = [
         'customer_id',
@@ -73,19 +73,19 @@ class Order extends Model
         $prefix = 'INV';
         $year = date('Y');
         $month = date('m');
-        
+
         // Get the last invoice number for this month
         $lastOrder = self::where('invoice_number', 'like', "{$prefix}-{$year}{$month}-%")
             ->orderBy('invoice_number', 'desc')
             ->first();
-        
+
         if ($lastOrder && $lastOrder->invoice_number) {
             $lastNumber = (int) substr($lastOrder->invoice_number, -4);
             $newNumber = $lastNumber + 1;
         } else {
             $newNumber = 1;
         }
-        
+
         return sprintf('%s-%s%s-%04d', $prefix, $year, $month, $newNumber);
     }
 
@@ -112,7 +112,7 @@ class Order extends Model
     {
         $total = $this->total;
         $paid = $this->total_paid;
-        
+
         if ($paid == 0) {
             return 'unpaid';
         } elseif ($paid >= $total) {
@@ -145,5 +145,13 @@ class Order extends Model
                 $order->invoice_number = self::generateInvoiceNumber();
             }
         });
+    }
+
+    public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
+    {
+        return \Spatie\Activitylog\LogOptions::defaults()
+            ->logOnly(['status', 'delivery_date', 'notes'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }

@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Customer extends Model
 {
-    use HasFactory;
+    use HasFactory, \Spatie\Activitylog\Traits\LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -31,5 +31,13 @@ class Customer extends Model
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
+    {
+        return \Spatie\Activitylog\LogOptions::defaults()
+            ->logOnly(['name', 'email', 'phone', 'address'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }

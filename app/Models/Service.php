@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Service extends Model
 {
-    use HasFactory;
+    use HasFactory, \Spatie\Activitylog\Traits\LogsActivity;
 
     protected $fillable = [
         'name',
@@ -40,7 +40,7 @@ class Service extends Model
      */
     public function getPricingTierLabelAttribute(): string
     {
-        return match($this->pricing_tier) {
+        return match ($this->pricing_tier) {
             self::PRICING_EXPRESS => 'Express',
             self::PRICING_PREMIUM => 'Premium',
             default => 'Regular',
@@ -61,5 +61,13 @@ class Service extends Model
     public function orders(): BelongsToMany
     {
         return $this->belongsToMany(Order::class)->withPivot('quantity');
+    }
+
+    public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
+    {
+        return \Spatie\Activitylog\LogOptions::defaults()
+            ->logOnly(['name', 'price', 'description', 'is_available'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }
