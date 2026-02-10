@@ -96,6 +96,22 @@
                 </p>
             @enderror
         </div>
+        
+        <!-- Payment Strategy -->
+        <div>
+            <label for="payment_strategy" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="bi bi-credit-card mr-2 text-indigo-600"></i>Payment <span class="text-red-500">*</span>
+            </label>
+            <select name="payment_strategy" 
+                    id="payment_strategy" 
+                    required
+                    class="w-full md:w-1/3 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 outline-none bg-white">
+                <option value="later">Pay Later (Create Order Only)</option>
+                <option value="online">Pay Online Now (Midtrans)</option>
+                <option value="cash">Paid with Cash Now</option>
+            </select>
+            <p class="mt-1 text-xs text-gray-500">Choose how to handle payment for this order.</p>
+        </div>
 
         <!-- Services Section -->
         <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">

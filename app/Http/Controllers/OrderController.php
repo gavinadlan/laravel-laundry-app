@@ -25,11 +25,11 @@ class OrderController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('invoice_number', 'like', "%{$search}%")
-                  ->orWhereHas('customer', function ($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%")
-                        ->orWhere('phone', 'like', "%{$search}%");
-                  });
+                    ->orWhereHas('customer', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%")
+                            ->orWhere('phone', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -90,6 +90,7 @@ class OrderController extends Controller
             'services' => 'required|array',
             'services.*.service_id' => 'required|exists:services,id',
             'services.*.quantity' => 'nullable|integer|min:0',
+            'payment_strategy' => 'required|string|in:later,online,cash',
         ]);
 
         // Create order record
@@ -111,6 +112,23 @@ class OrderController extends Controller
         }
         if (!empty($serviceData)) {
             $order->services()->attach($serviceData);
+        }
+
+        // Handle Payment Strategy
+        $strategy = $request->input('payment_strategy', 'later');
+
+        if ($strategy === 'online') {
+            return redirect()->route('orders.checkout', $order);
+        } elseif ($strategy === 'cash') {
+            // Create full payment record immediately
+            \App\Models\Payment::create([
+                'order_id' => $order->id,
+                'amount' => $order->total,
+                'payment_date' => now(),
+                'method' => \App\Models\Payment::METHOD_CASH,
+                'reference' => 'CASH-' . time(),
+            ]);
+            return redirect()->route('orders.show', $order)->with('success', 'Order created and marked as paid via Cash.');
         }
 
         return redirect()->route('orders.index')->with('success', 'Order created successfully.');
