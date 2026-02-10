@@ -24,6 +24,7 @@ Comprehensive feature roadmap untuk laundry management app dengan Laravel
 | --------------------------------------------- | ---------- | ---------------------------------------- |
 | Multiple payments per order (partial payment) | ✅ Done    | Model, Controller & Views updated       |
 | Payment methods (cash, transfer, e-wallet)    | ✅ Done    | Enum methods with labels & UI implemented |
+| Online Payment Gateway (Midtrans)             | ✅ Done    | Integrated Midtrans Snap for QRIS, etc.  |
 | Outstanding payment tracking                  | ✅ Done    | Computed properties & UI display         |
 | Payment history per customer                  | ✅ Done    | Customer payment view complete           |
 | Payment reminders                             | ⏳ Pending | Future feature                           |
@@ -151,7 +152,8 @@ Comprehensive feature roadmap untuk laundry management app dengan Laravel
 | spatie/laravel-permission | Role & Permission management |
 | barryvdh/laravel-dompdf   | PDF generation               |
 | maatwebsite/excel         | Excel export                 |
+| midtrans/midtrans-php     | Online Payment Gateway       |
 
 ---
 
-_Last Updated: 2026-01-04 - All views completed!_
+_Last Updated: 2026-02-10 - Midtrans Integration Added!_
