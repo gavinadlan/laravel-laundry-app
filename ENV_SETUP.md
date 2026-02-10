@@ -3,7 +3,7 @@
 Karena file .env.example tidak bisa dibuat otomatis, silakan buat file `.env` secara manual dengan konten berikut:
 
 ```env
-APP_NAME=LaundryApp
+APP_NAME=LaundryGo
 APP_ENV=local
 APP_KEY=
 APP_DEBUG=true

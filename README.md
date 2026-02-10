@@ -48,7 +48,7 @@ Aplikasi ini sudah dilengkapi dengan semua file yang diperlukan untuk menjalanka
    - Atau buat manual dengan konfigurasi berikut:
    
    ```env
-   APP_NAME=LaundryApp
+   APP_NAME=LaundryGo
    APP_ENV=local
    APP_KEY=
    APP_DEBUG=true

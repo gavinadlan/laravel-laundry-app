@@ -56,16 +56,10 @@
         class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:flex md:flex-col h-full shadow-2xl md:shadow-none">
 
         <!-- Logo -->
-        <div class="flex-shrink-0 h-16 flex items-center px-6 border-b border-gray-100 bg-white">
-            <a href="{{ url('/') }}" class="flex items-center space-x-3 group">
-                <div
-                    class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-200">
-                    <i class="bi bi-droplet-fill text-white text-sm"></i>
-                </div>
-                <span
-                    class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                    LaundryApp
-                </span>
+        <div class="flex-shrink-0 h-24 flex items-center justify-center border-b border-gray-100 bg-white">
+            <a href="{{ url('/') }}" class="flex items-center justify-center w-full h-full p-1 group">
+                <img src="{{ asset('images/logo.png') }}" alt="{{ config('app.name') }}"
+                    class="h-full w-auto object-contain group-hover:scale-105 transition-transform duration-200">
             </a>
             <!-- Close button for mobile -->
             <button class="md:hidden ml-auto text-gray-500 hover:text-gray-800" onclick="toggleSidebar()">
@@ -189,14 +183,7 @@
         <header
             class="md:hidden bg-white/80 backdrop-blur-lg border-b border-gray-200 flex items-center justify-between h-16 px-4 sticky top-0 z-30">
             <div class="flex items-center space-x-2">
-                <div
-                    class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md">
-                    <i class="bi bi-droplet-fill text-white text-sm"></i>
-                </div>
-                <span
-                    class="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                    LaundryApp
-                </span>
+                <img src="{{ asset('images/logo.png') }}" alt="{{ config('app.name') }}" class="h-12 w-auto md:h-14">
             </div>
             <button onclick="toggleSidebar()"
                 class="p-2 -mr-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
@@ -252,7 +239,7 @@
 
             <!-- Footer Credit -->
             <div class="mt-8 text-center text-xs text-gray-400 pb-4">
-                &copy; {{ date('Y') }} LaundryApp. All rights reserved.
+                &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
             </div>
         </main>
     </div>
