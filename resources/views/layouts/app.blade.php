@@ -56,10 +56,10 @@
         class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:flex md:flex-col h-full shadow-2xl md:shadow-none">
 
         <!-- Logo -->
-        <div class="flex-shrink-0 h-24 flex items-center justify-center border-b border-gray-100 bg-white">
-            <a href="{{ url('/') }}" class="flex items-center justify-center w-full h-full p-1 group">
+        <div class="flex-shrink-0 flex items-center justify-center py-6 border-b border-gray-100 bg-white">
+            <a href="{{ url('/') }}" class="flex items-center justify-center w-full px-4 group">
                 <img src="{{ asset('images/logo.png') }}" alt="{{ config('app.name') }}"
-                    class="h-full w-auto object-contain group-hover:scale-105 transition-transform duration-200">
+                    class="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-200">
             </a>
             <!-- Close button for mobile -->
             <button class="md:hidden ml-auto text-gray-500 hover:text-gray-800" onclick="toggleSidebar()">
@@ -181,9 +181,9 @@
 
         <!-- Mobile Header -->
         <header
-            class="md:hidden bg-white/80 backdrop-blur-lg border-b border-gray-200 flex items-center justify-between h-16 px-4 sticky top-0 z-30">
+            class="md:hidden bg-white/80 backdrop-blur-lg border-b border-gray-200 flex items-center justify-between py-3 px-4 sticky top-0 z-30">
             <div class="flex items-center space-x-2">
-                <img src="{{ asset('images/logo.png') }}" alt="{{ config('app.name') }}" class="h-12 w-auto md:h-14">
+                <img src="{{ asset('images/logo.png') }}" alt="{{ config('app.name') }}" class="h-20 w-auto">
             </div>
             <button onclick="toggleSidebar()"
                 class="p-2 -mr-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
