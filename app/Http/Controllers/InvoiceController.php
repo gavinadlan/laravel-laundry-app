@@ -36,16 +36,15 @@ class InvoiceController extends Controller
             $query->where('order_date', '<=', $request->date_to);
         }
 
+        /** @var \Illuminate\Pagination\LengthAwarePaginator $orders */
         $orders = $query->latest()->paginate(15);
 
         // Filter by payment status if needed (after loading)
         if ($request->filled('payment_status')) {
-            $orders->getCollection()->transform(function ($order) use ($request) {
-                if ($order->payment_status !== $request->payment_status) {
-                    return null;
-                }
-                return $order;
-            })->filter();
+            $filtered = $orders->getCollection()->filter(function ($order) use ($request) {
+                return $order->payment_status === $request->payment_status;
+            });
+            $orders->setCollection($filtered);
         }
 
         $customers = \App\Models\Customer::orderBy('name')->get();
