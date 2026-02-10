@@ -50,6 +50,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('service-categories', ServiceCategoryController::class);
     Route::resource('services', ServiceController::class);
     Route::resource('orders', OrderController::class);
+    Route::resource('orders', OrderController::class);
+
+    // Midtrans Finish Redirect (Must be defined before resource route)
+    Route::get('payments/finish', [PaymentController::class, 'complete'])->name('payments.complete');
+
     Route::resource('payments', PaymentController::class);
 
     // Invoices
@@ -67,4 +72,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('reports/export/orders', [ReportController::class, 'exportOrders'])->name('reports.export.orders');
     Route::get('reports/export/payments', [ReportController::class, 'exportPayments'])->name('reports.export.payments');
     Route::get('reports/export/pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf');
+
+    // Midtrans Payment
+    Route::get('orders/{order}/checkout', [PaymentController::class, 'checkout'])->name('orders.checkout');
 });
+
+// Midtrans Notification Webhook (outside auth middleware, but we need to exclude from CSRF)
+Route::post('payments/notification', [PaymentController::class, 'notification'])->name('payments.notification');

@@ -38,13 +38,18 @@ class Payment extends Model
      */
     public function getMethodLabelAttribute(): string
     {
-        return match($this->method) {
+        if (str_starts_with($this->method, 'midtrans_')) {
+            $type = str_replace('midtrans_', '', $this->method);
+            return ucfirst(str_replace('_', ' ', $type)) . ' (Midtrans)';
+        }
+
+        return match ($this->method) {
             self::METHOD_CASH => 'Cash',
             self::METHOD_TRANSFER => 'Transfer',
             self::METHOD_E_WALLET => 'E-Wallet',
             self::METHOD_CREDIT_CARD => 'Credit Card',
             self::METHOD_DEBIT_CARD => 'Debit Card',
-            default => ucfirst($this->method ?? 'Unknown'),
+            default => ucfirst(str_replace('_', ' ', $this->method ?? 'Unknown')),
         };
     }
 
@@ -59,7 +64,7 @@ class Payment extends Model
             self::METHOD_E_WALLET => 'E-Wallet',
             self::METHOD_CREDIT_CARD => 'Credit Card',
             self::METHOD_DEBIT_CARD => 'Debit Card',
-    ];
+        ];
     }
 
     /**
