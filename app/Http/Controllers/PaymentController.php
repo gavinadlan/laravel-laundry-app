@@ -34,7 +34,7 @@ class PaymentController extends Controller
 
         try {
             // Check transaction status from Midtrans API
-            $transaction = Transaction::status($midtransOrderId);
+            $transaction = (object) Transaction::status($midtransOrderId);
             $type = $transaction->payment_type;
             $fraud = $transaction->fraud_status;
             $status = $transaction->transaction_status;
@@ -94,21 +94,21 @@ class PaymentController extends Controller
         // Filter by customer if provided
         if ($request->filled('customer_id')) {
             $query->whereHas('order', function ($q) use ($request) {
-                $q->where('customer_id', $request->customer_id);
+                $q->where('customer_id', $request->input('customer_id'));
             });
         }
 
         // Filter by payment method
         if ($request->filled('method')) {
-            $query->where('method', $request->method);
+            $query->where('method', $request->input('method'));
         }
 
         // Filter by date range
         if ($request->filled('date_from')) {
-            $query->where('payment_date', '>=', $request->date_from);
+            $query->where('payment_date', '>=', $request->input('date_from'));
         }
         if ($request->filled('date_to')) {
-            $query->where('payment_date', '<=', $request->date_to);
+            $query->where('payment_date', '<=', $request->input('date_to'));
         }
 
         $payments = $query->latest()->paginate(10);
@@ -207,15 +207,15 @@ class PaymentController extends Controller
     public function notification(Request $request)
     {
         $serverKey = config('midtrans.server_key');
-        $hashed = hash("sha512", $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
+        $hashed = hash("sha512", $request->input('order_id') . $request->input('status_code') . $request->input('gross_amount') . $serverKey);
 
-        if ($hashed == $request->signature_key) {
-            $status = $request->transaction_status;
-            $type = $request->payment_type;
-            $fraud = $request->fraud_status;
+        if ($hashed == $request->input('signature_key')) {
+            $status = $request->input('transaction_status');
+            $type = $request->input('payment_type');
+            $fraud = $request->input('fraud_status');
 
             // Extract invoice number from midtrans order_id (INV-xxxx-timestamp)
-            $midtransOrderId = $request->order_id;
+            $midtransOrderId = $request->input('order_id');
             // Assuming invoice number format INV-YYYYMM-XXXX
             // We append -timestamp, so we can split by - and take all but last part?
             // Actually, invoice number itself has dashes.
@@ -250,16 +250,16 @@ class PaymentController extends Controller
     private function createMidtransPayment($order, $request)
     {
         // Avoid duplicate payments
-        if (Payment::where('reference', $request->transaction_id)->exists()) {
+        if (Payment::where('reference', $request->input('transaction_id'))->exists()) {
             return;
         }
 
         Payment::create([
             'order_id' => $order->id,
-            'amount' => $request->gross_amount,
+            'amount' => $request->input('gross_amount'),
             'payment_date' => now(),
-            'method' => 'midtrans_' . $request->payment_type,
-            'reference' => $request->transaction_id,
+            'method' => 'midtrans_' . $request->input('payment_type'),
+            'reference' => $request->input('transaction_id'),
         ]);
 
         if ($order->status === Order::STATUS_PENDING) {
